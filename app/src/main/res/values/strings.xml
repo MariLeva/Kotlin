@@ -3,4 +3,11 @@
     <string name="button">Button</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="city_default">Москва</string>
+    <string name="city_coordinates_default">lt/ln: 55.755826, 37.617299900000035</string>
+    <string name="city_coordinates">lt/ln: $s, $s"</string>
+    <string name="temperature_label">Температура</string>
+    <string name="temperature_value_default">+15</string>
+    <string name="feels_like_label">Ощущается как</string>
+
 </resources>
