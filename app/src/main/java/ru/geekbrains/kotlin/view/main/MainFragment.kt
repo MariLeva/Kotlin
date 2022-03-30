@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentMainBinding
+import ru.geekbrains.kotlin.viewmodel.AppState
 import ru.geekbrains.kotlin.viewmodel.MainViewModel
 
 private const val ARG_PARAM1 = "param1"
@@ -35,11 +36,11 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.tvName.text = "Binding GOOD!"
+        binding.message.text = "Binding GOOD!"
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        val observer = object : Observer<Any> {
-            override fun onChanged(data: Any) {
+        val observer = object : Observer<AppState> {
+            override fun onChanged(data: AppState) {
                 renderData(data)
             }
         }
@@ -52,7 +53,19 @@ class MainFragment : Fragment() {
        // binding = null
     }
 
-    private fun renderData(data: Any) {
-        Toast.makeText(context, "Good!", Toast.LENGTH_SHORT).show()
+    private fun renderData(data: AppState) {
+        when (data){
+            is AppState.Error -> {
+                binding.loadingLayout.visibility = View.GONE
+                binding.message.text = "Не получилось ${data.error}"
+            }
+            is AppState.Loading -> {
+                binding.loadingLayout.visibility = View.VISIBLE
+            }
+            is AppState.Success -> {
+                binding.loadingLayout.visibility = View.GONE
+                binding.message.text = "Получилось"
+            }
+        }
     }
 }
