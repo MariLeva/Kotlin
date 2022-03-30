@@ -1,4 +1,4 @@
-package ru.geekbrains.kotlin
+package ru.geekbrains.kotlin.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,6 +6,11 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import ru.geekbrains.kotlin.DataBase
+import ru.geekbrains.kotlin.DayEnum
+import ru.geekbrains.kotlin.Note
+import ru.geekbrains.kotlin.R
+import ru.geekbrains.kotlin.view.main.MainFragment
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -13,7 +18,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val noteOne = Note("Утро", "Прогулка с собакой", Date())
+        if(savedInstanceState==null){
+            supportFragmentManager.beginTransaction().replace(R.id.container, MainFragment.newInstance()).commit();
+        }
+
+        /*val noteOne = Note("Утро", "Прогулка с собакой", Date())
         val noteTwo = noteOne.copy()
 
         findViewById<Button>(R.id.button).setOnClickListener(object : View.OnClickListener {
@@ -26,6 +35,6 @@ class MainActivity : AppCompatActivity() {
         val text = (if (noteOne.title.equals("Утро")) noteOne.note else "Нет дел!")
         Log.d("myLog","${text.toString()}")
         Log.d("myLog","${DataBase.getWhen(DayEnum.MORNING)}")
-        DataBase.getFor()
+        DataBase.getFor()*/
     }
 }
