@@ -9,27 +9,4 @@
     android:orientation="vertical"
     tools:context=".view.MainActivity">
 
-    <TextView
-        android:id="@+id/textViewOne"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text=""
-        android:textSize="@dimen/text" />
-
-    <TextView
-        android:id="@+id/textViewTwo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text=""
-        android:textSize="@dimen/text" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button"
-        android:textSize="@dimen/text" />
-
 </LinearLayout>
