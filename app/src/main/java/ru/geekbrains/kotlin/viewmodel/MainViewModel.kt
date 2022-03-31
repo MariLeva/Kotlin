@@ -23,7 +23,7 @@ class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiv
         liveData.value = AppState.Loading
         Thread{
             sleep(1000)
-            liveData.postValue(AppState.Success(repository.getWeatherFromServer()))
+            liveData.postValue(AppState.Error(Throwable()))
         }.start()
     }
 
