@@ -2,12 +2,14 @@ package ru.geekbrains.kotlin.repository
 
 class RepositoryImpl: Repository {
     override fun getWeatherFromServer(): Weather {
-        Thread.sleep(2000L)
         return Weather()
     }
 
-    override fun getWeatherFromLocalServer(): Weather {
-        Thread.sleep(20L)
-        return Weather()
+    override fun getWorldWeatherFromLocalStorage(): List<Weather> {
+        return getWorldCities()
+    }
+
+    override fun getRusWeatherFromLocalStorage(): List<Weather> {
+        return getRussianCities()
     }
 }

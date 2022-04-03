@@ -7,15 +7,24 @@ import ru.geekbrains.kotlin.repository.RepositoryImpl
 import java.lang.Thread.sleep
 
 class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiveData(),
-                    private val repository: RepositoryImpl = RepositoryImpl()): ViewModel() {
+                    private val repository: RepositoryImpl = RepositoryImpl()):
+                    ViewModel() {
 
     fun getData() : LiveData<AppState> = liveData
 
-    fun getWeatherFromLocal(){
+    fun getWeatherFromLocalRus() = getWeatherFromLocal(true)
+
+    fun getWeatherFromLocalWorld() = getWeatherFromLocal(false)
+
+    fun getWeatherFromServer() = getWeatherFromRemote()
+
+    fun getWeatherFromLocal(isRus: Boolean){
         liveData.value = AppState.Loading
-        Thread{
+        Thread {
             sleep(1000)
-            liveData.postValue(AppState.Success(repository.getWeatherFromLocalServer()))
+            liveData.postValue(AppState.Success(
+                    if (isRus) repository.getRusWeatherFromLocalStorage()
+                    else repository.getWorldWeatherFromLocalStorage()))
         }.start()
     }
 

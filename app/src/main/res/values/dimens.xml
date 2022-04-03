@@ -6,4 +6,9 @@
     <dimen name="temperature_value_text_size">40sp</dimen>
     <dimen name="feels_like_text_size">30sp</dimen>
     <dimen name="margin_5_dp">5dp</dimen>
+    <dimen name="icon_size">56dp</dimen>
+    <dimen name="margin_image">20dp</dimen>
+    <dimen name="recycler_item_padding">10dp</dimen>
+    <dimen name="recycler_item_line_height">1dp</dimen>
+    <dimen name="margin_end">20dp</dimen>
 </resources>

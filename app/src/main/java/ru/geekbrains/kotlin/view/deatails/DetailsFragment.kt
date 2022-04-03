@@ -1,4 +1,4 @@
-package ru.geekbrains.kotlin.view.main
+package ru.geekbrains.kotlin.view.deatails
 
 import android.os.Bundle
 import android.view.*
@@ -15,7 +15,7 @@ import ru.geekbrains.kotlin.viewmodel.MainViewModel
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-class MainFragment : Fragment() {
+class DetailsFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
     private var _binding: FragmentMainBinding? = null
@@ -24,7 +24,7 @@ class MainFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = MainFragment()
+        fun newInstance() = DetailsFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -42,11 +42,10 @@ class MainFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         val observer = object : Observer<AppState> {
             override fun onChanged(data: AppState) {
-                renderData(data)
             }
         }
         viewModel.getData().observe(viewLifecycleOwner, observer)
-        viewModel.getWeatherFromLocal()
+        //viewModel.getWeatherFromLocal()
     }
 
     override fun onDestroy() {
@@ -62,30 +61,11 @@ class MainFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.local_server ->
-                viewModel.getWeatherFromLocal()
+                viewModel.getWeatherFromLocal(true)
             R.id.server ->
                 viewModel.getWeatherFromRemote()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun renderData(data: AppState) {
-        when (data){
-            is AppState.Error -> {
-                binding.loadingLayout.visibility = View.GONE
-                Snackbar.make(binding.mainView, "Не получилось ${data.error} RemoteServer", Snackbar.LENGTH_LONG).show()
-            }
-            is AppState.Loading -> {
-                binding.loadingLayout.visibility = View.VISIBLE
-            }
-            is AppState.Success -> {
-                binding.loadingLayout.visibility = View.GONE
-                binding.cityName.text = data.weatherData.city.name.toString()
-                binding.temperatureValue.text = data.weatherData.temperature.toString()
-                binding.feelsLikeLabel.text = data.weatherData.feelsLike.toString()
-                binding.cityCoordinates.text = "${data.weatherData.city.lat} ${data.weatherData.city.lon}"
-                Snackbar.make(binding.mainView, "Получилось LocalServer", Snackbar.LENGTH_LONG).show()
-            }
-        }
-    }
 }

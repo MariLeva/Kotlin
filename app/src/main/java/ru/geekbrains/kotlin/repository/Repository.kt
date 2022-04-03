@@ -2,5 +2,6 @@ package ru.geekbrains.kotlin.repository
 
 interface Repository {
     fun getWeatherFromServer(): Weather
-    fun getWeatherFromLocalServer(): Weather
+    fun getWorldWeatherFromLocalStorage(): List<Weather>
+    fun getRusWeatherFromLocalStorage(): List<Weather>
 }
