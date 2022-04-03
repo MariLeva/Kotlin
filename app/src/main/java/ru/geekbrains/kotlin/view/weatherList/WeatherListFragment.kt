@@ -1,10 +1,7 @@
 package ru.geekbrains.kotlin.view.weatherList
 
-import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -17,26 +14,36 @@ import ru.geekbrains.kotlin.view.deatails.DetailsFragment
 import ru.geekbrains.kotlin.viewmodel.AppState
 import ru.geekbrains.kotlin.viewmodel.MainViewModel
 
-class WartherListFragment : Fragment(), OnItemClickListener {
+class WeatherListFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var viewModel: MainViewModel
-    private var isRus = true
-    private val adapter = WeatherListAdapter(this)
+    private var isRus: Boolean = true
+
+    private val adapter = WeatherListAdapter(object : OnItemClickListener{
+        override fun onItemClick(weather: Weather) {
+            val bundle = Bundle()
+            bundle.putParcelable(DetailsFragment.KEY_BUNDLE_WEATHER, weather)
+            requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.container, DetailsFragment.newInstance(bundle)) //add не открывает, не могу понять почему
+                    .addToBackStack("").commit()
+        }
+    })
 
     companion object {
-        @JvmStatic
-        fun newInstance() = WartherListFragment()
+        fun newInstance() = WeatherListFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
+
         binding.recyclerView.adapter = adapter
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getData().observe(viewLifecycleOwner, Observer { renderData(it) })
@@ -44,23 +51,14 @@ class WartherListFragment : Fragment(), OnItemClickListener {
 
         binding.mainFragmentFAB.setOnClickListener {
             isRus = !isRus
-            if (isRus) {
-                viewModel.getWeatherFromLocalRus()
-                binding.mainFragmentFAB.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_rus))
-            } else {
-                viewModel.getWeatherFromLocalWorld()
-                binding.mainFragmentFAB.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_world))
-            }
+            changeWeatherDataSet()
         }
     }
 
 
-    override fun onItemClick(weather: Weather) {
-        val bundle = Bundle()
-        // bundle.putParcelable(KEY_BUNDLE_WEATHER, weather)
-        //    requireActivity().supportFragmentManager.beginTransaction().add(
-        //          R.id.container, DetailsFragment.newInstance(bundle)
-        //).addToBackStack("").commit()
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 
     private fun renderData(data: AppState) {
@@ -79,5 +77,29 @@ class WartherListFragment : Fragment(), OnItemClickListener {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId){
+            R.id.local_server ->
+                changeWeatherDataSet()
+            R.id.server ->
+                viewModel.getWeatherFromServer()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun changeWeatherDataSet(){
+        if (isRus) {
+            viewModel.getWeatherFromLocalRus()
+            binding.mainFragmentFAB.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_rus))
+        } else {
+            viewModel.getWeatherFromLocalWorld()
+            binding.mainFragmentFAB.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_world))
+        }
+    }
 
 }

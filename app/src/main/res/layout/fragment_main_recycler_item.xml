@@ -7,10 +7,11 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/mainFragmentRecyclerItemTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/recycler_item_padding"
         android:textSize="@dimen/text"
+        android:text="@string/city_default"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -8,12 +8,13 @@ import ru.geekbrains.kotlin.databinding.FragmentMainRecyclerItemBinding
 import ru.geekbrains.kotlin.repository.Weather
 
 class WeatherListAdapter(
-        private val onItemClickListener: OnItemClickListener,
-        private var data: List<Weather> = listOf()
+        private val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<WeatherListAdapter.CityHolder>() {
 
+    private var data: List<Weather> = listOf()
+
     fun setData(weather: List<Weather>){
-        data = weather
+        this.data = weather
         notifyDataSetChanged()
     }
 
