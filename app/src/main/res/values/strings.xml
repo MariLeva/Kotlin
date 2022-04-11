@@ -11,5 +11,7 @@
     <string name="feels_like_label">Ощущается как</string>
     <string name="local_server">Local Server</string>
     <string name="remote_server">Remote Server</string>
+    <string name="open">Открыть</string>
+
 
 </resources>

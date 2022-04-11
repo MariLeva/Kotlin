@@ -46,7 +46,7 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
         binding.apply {
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
-            mainFragmentFAB.setOnClickListener{
+            mainFragmentFAB.setOnClickListener {
                 isRus = !isRus
                 changeWeatherDataSet()
             }
@@ -64,20 +64,37 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
     }
 
     private fun renderData(data: AppState) {
-        when (data) {
-            is AppState.Error -> {
-                binding.loadingLayout.visibility = View.GONE
-                Snackbar.make(binding.root, "Не получилось ${data.error} RemoteServer", Snackbar.LENGTH_LONG).show()
-            }
-            is AppState.Loading -> {
-                binding.loadingLayout.visibility = View.VISIBLE
-            }
-            is AppState.Success -> {
-                binding.loadingLayout.visibility = View.GONE
-                adapter.setData(data.weatherData)
+        with(binding) {
+            when (data) {
+                is AppState.Error -> {
+                    loadingLayout.visibility = View.GONE
+                    mainFragment.showSnackBar("Не получилось ${data.error} RemoteServer", 0)
+                }
+                is AppState.Loading -> {
+                    loadingLayout.visibility = View.VISIBLE
+                }
+                is AppState.Success -> {
+                    loadingLayout.visibility = View.GONE
+                    adapter.setData(data.weatherData)
+                }
             }
         }
     }
+
+    private fun View.showSnackBar(
+            text: String,
+            length: Int = Snackbar.LENGTH_INDEFINITE) {
+        Snackbar.make(this, text, length).show()
+    }
+
+    private fun View.showSnackBarAction(
+            text: String,
+            length: Int = Snackbar.LENGTH_INDEFINITE,
+            actionText: String,
+            action: (View) -> Unit) {
+        Snackbar.make(this, text, length).setAction(actionText, action).show()
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu, menu)
@@ -87,9 +104,11 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.local_server ->
-                changeWeatherDataSet()
+                binding.mainFragment.showSnackBarAction(getString(R.string.local_server),0, getString(R.string.open),
+                        {changeWeatherDataSet()})
             R.id.server ->
-                viewModel.getWeatherFromServer()
+                binding.mainFragment.showSnackBarAction(getString(R.string.remote_server),0, getString(R.string.open),
+                        { viewModel.getWeatherFromServer()})
         }
         return super.onOptionsItemSelected(item)
     }
