@@ -26,7 +26,7 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
 
     override fun onItemClick(weather: Weather) {
         requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.container, DetailsFragment.newInstance(Bundle().apply {
+                .add(R.id.container, DetailsFragment.newInstance(Bundle().apply {
                     putParcelable(KEY_BUNDLE_WEATHER, weather)
                 })).addToBackStack("").commit()
     }
