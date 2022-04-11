@@ -1,10 +1,11 @@
-package ru.geekbrains.kotlin.view.deatails
+package ru.geekbrains.kotlin.view.details
 
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import ru.geekbrains.kotlin.databinding.FragmentDetailsBinding
 import ru.geekbrains.kotlin.repository.Weather
+import ru.geekbrains.kotlin.view.utlis.KEY_BUNDLE_WEATHER
 
 class DetailsFragment : Fragment() {
 
@@ -13,8 +14,7 @@ class DetailsFragment : Fragment() {
 
 
     companion object {
-        const val KEY_BUNDLE_WEATHER = "weather"
-
+        @JvmStatic
         fun newInstance(bundle: Bundle): DetailsFragment {
             val fragment = DetailsFragment()
             fragment.arguments = bundle
@@ -30,12 +30,14 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val weather: Weather = requireArguments().getParcelable<Weather>(KEY_BUNDLE_WEATHER)!!
-        binding.cityName.text = weather.city.name
-        binding.temperatureValue.text = weather.temperature.toString()
-        binding.feelsLikeLabel.text = weather.feelsLike.toString()
-        binding.cityCoordinates.text = "${weather.city.lat} ${weather.city.lon}"
-
+        arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
+            with(binding){
+                cityName.text = it.city.name
+                temperatureValue.text = it.temperature.toString()
+                feelsLikeLabel.text = it.feelsLike.toString()
+                cityCoordinates.text = "${it.city.lat} ${it.city.lon}"
+            }
+        }
     }
 
     override fun onDestroy() {

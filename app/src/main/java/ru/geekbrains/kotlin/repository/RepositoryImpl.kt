@@ -1,15 +1,9 @@
 package ru.geekbrains.kotlin.repository
 
 class RepositoryImpl: Repository {
-    override fun getWeatherFromServer(): Weather {
-        return Weather()
-    }
+    override fun getWeatherFromServer() = Weather()
 
-    override fun getWorldWeatherFromLocalStorage(): List<Weather> {
-        return getWorldCities()
-    }
+    override fun getWorldWeatherFromLocalStorage() = getWorldCities()
 
-    override fun getRusWeatherFromLocalStorage(): List<Weather> {
-        return getRussianCities()
-    }
+    override fun getRusWeatherFromLocalStorage() = getRussianCities()
 }
