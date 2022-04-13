@@ -8,5 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue_100">#7BA7A3</color>
+    <color name="blue_500">#3A635F</color>
     <color name="fragmentBackground">#FFFFFF</color>
 </resources>
