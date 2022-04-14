@@ -22,7 +22,6 @@ class DetailsFragment : Fragment() {
             override fun onLoaded(weatherDTO: WeatherDTO) {
                 displayWeather(weatherDTO)
             }
-
             override fun onFailed(throwable: Throwable) {
                 //ошибка
             }
