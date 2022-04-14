@@ -1,17 +1,33 @@
 package ru.geekbrains.kotlin.view.details
 
+import android.os.Build
 import android.os.Bundle
 import android.view.*
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentDetailsBinding
 import ru.geekbrains.kotlin.repository.Weather
+import ru.geekbrains.kotlin.repository.WeatherDTO
+import ru.geekbrains.kotlin.repository.WeatherLoader
 import ru.geekbrains.kotlin.view.utlis.KEY_BUNDLE_WEATHER
 
 class DetailsFragment : Fragment() {
 
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
+    private lateinit var weather: Weather
+    private val onLoadListener: WeatherLoader.WeatherLoaderListener =
+        object : WeatherLoader.WeatherLoaderListener{
+            override fun onLoaded(weatherDTO: WeatherDTO) {
+                displayWeather(weatherDTO)
+            }
 
+            override fun onFailed(throwable: Throwable) {
+                //ошибка
+            }
+
+        }
 
     companion object {
         @JvmStatic
@@ -28,15 +44,25 @@ class DetailsFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
-            with(binding){
-                cityName.text = it.city.name
-                temperatureValue.text = it.temperature.toString()
-                feelsLikeLabel.text = it.feelsLike.toString()
-                cityCoordinates.text = "${it.city.lat} ${it.city.lon}"
-            }
+        weather = arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?: Weather()
+        binding.mainView.visibility = View.GONE
+        val loader = WeatherLoader(onLoadListener, weather.city.lat, weather.city.lon)
+        loader.loadWeather()
+    }
+
+
+    private fun displayWeather(weatherDTO: WeatherDTO){
+        with(binding){
+            mainView.visibility = View.VISIBLE
+            val city = weather.city
+            cityName.text = city.name
+            cityCoordinates.text = "${city.lat} ${city.lon}"
+            weatherCondition.text = weatherDTO.fact?.condition
+            temperatureValue.text = weatherDTO.fact?.temp.toString()
+            feelsLikeValue.text = weatherDTO.fact?.feels_like.toString()
         }
     }
 
@@ -44,5 +70,6 @@ class DetailsFragment : Fragment() {
         _binding = null
         super.onDestroy()
     }
+
 
 }
