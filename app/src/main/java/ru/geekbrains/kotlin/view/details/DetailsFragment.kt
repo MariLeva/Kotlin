@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentDetailsBinding
 import ru.geekbrains.kotlin.repository.Weather
 import ru.geekbrains.kotlin.repository.WeatherDTO
 import ru.geekbrains.kotlin.repository.WeatherLoader
 import ru.geekbrains.kotlin.view.utlis.KEY_BUNDLE_WEATHER
+import ru.geekbrains.kotlin.view.weatherList.WeatherListFragment
 
 class DetailsFragment : Fragment() {
 
@@ -23,10 +25,16 @@ class DetailsFragment : Fragment() {
                 displayWeather(weatherDTO)
             }
             override fun onFailed(throwable: Throwable) {
-                //ошибка
+                binding.detailsFragment.showSnackBar("Ошибка загрузки!",0)
             }
 
         }
+
+    private fun View.showSnackBar(
+        text: String,
+        length: Int = Snackbar.LENGTH_INDEFINITE) {
+        Snackbar.make(this, text, length).show()
+    }
 
     companion object {
         @JvmStatic
