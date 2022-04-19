@@ -1,38 +1,32 @@
 package ru.geekbrains.kotlin.view.details
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.snackbar.Snackbar
-import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentDetailsBinding
 import ru.geekbrains.kotlin.repository.Weather
 import ru.geekbrains.kotlin.repository.WeatherDTO
 import ru.geekbrains.kotlin.repository.WeatherLoader
-import ru.geekbrains.kotlin.view.utlis.KEY_BUNDLE_WEATHER
-import ru.geekbrains.kotlin.view.weatherList.WeatherListFragment
+import ru.geekbrains.kotlin.view.utlis.*
 
-class DetailsFragment : Fragment() {
+class DetailsFragment : Fragment(), WeatherLoader {
 
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
     private lateinit var weather: Weather
-    private val onLoadListener: WeatherLoader.WeatherLoaderListener =
-        object : WeatherLoader.WeatherLoaderListener{
-            override fun onLoaded(weatherDTO: WeatherDTO) {
-                displayWeather(weatherDTO)
-            }
-            override fun onFailed(throwable: Throwable) {
-                binding.detailsFragment.showSnackBar("Ошибка загрузки!",0)
-            }
-
-        }
 
     private fun View.showSnackBar(
         text: String,
-        length: Int = Snackbar.LENGTH_INDEFINITE) {
+        length: Int = Snackbar.LENGTH_INDEFINITE
+    ) {
         Snackbar.make(this, text, length).show()
     }
 
@@ -45,8 +39,10 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,15 +50,20 @@ class DetailsFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        weather = arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?: Weather()
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(receiver,
+            IntentFilter(KEY_WAVE_SERVICE_BROADCAST)
+        )
+        weather = arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER) ?: Weather()
         binding.mainView.visibility = View.GONE
-        val loader = WeatherLoader(onLoadListener, weather.city.lat, weather.city.lon)
-        loader.loadWeather()
+        requireActivity().startService(Intent(requireContext(),DetailsService::class.java).apply {
+            putExtra(KEY_BUNDLE_LAT,weather.city.lat)
+            putExtra(KEY_BUNDLE_LON,weather.city.lon)
+        })
     }
 
 
-    private fun displayWeather(weatherDTO: WeatherDTO){
-        with(binding){
+    private fun displayWeather(weatherDTO: WeatherDTO) {
+        with(binding) {
             mainView.visibility = View.VISIBLE
             val city = weather.city
             cityName.text = city.name
@@ -75,8 +76,27 @@ class DetailsFragment : Fragment() {
 
     override fun onDestroy() {
         _binding = null
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver)
         super.onDestroy()
     }
 
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            intent?.let { intent ->
+                intent.getParcelableExtra<WeatherDTO>(DETAILS_RESULT)?.let {
+                    onLoaded(it)
+                }
+            }
+        }
+    }
+
+    override fun onLoaded(weatherDTO: WeatherDTO) {
+        displayWeather(weatherDTO)
+    }
+
+    override fun onFailed(throwable: Throwable) {
+        binding.detailsFragment.showSnackBar("Ошибка загрузки!", 0)
+    }
 
 }
+
