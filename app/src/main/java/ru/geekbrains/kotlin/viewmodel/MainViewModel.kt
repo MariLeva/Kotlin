@@ -18,7 +18,7 @@ class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiv
 
     fun getWeatherFromServer() = getWeatherFromRemote()
 
-    fun getWeatherFromLocal(isRus: Boolean){
+    private fun getWeatherFromLocal(isRus: Boolean){
         liveData.value = AppState.Loading
         Thread {
             sleep(1000)
@@ -28,7 +28,7 @@ class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiv
         }.start()
     }
 
-    fun getWeatherFromRemote(){
+    private fun getWeatherFromRemote(){
         liveData.value = AppState.Loading
         Thread{
             sleep(1000)

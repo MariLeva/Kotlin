@@ -86,6 +86,9 @@ class DetailsFragment : Fragment(), WeatherLoader {
                 intent.getParcelableExtra<WeatherDTO>(DETAILS_RESULT)?.let {
                     onLoaded(it)
                 }
+                intent.getStringExtra(DETAILS_RESULT_ERROR)?.let {
+                    onFailed(it)
+                }
             }
         }
     }
@@ -94,8 +97,8 @@ class DetailsFragment : Fragment(), WeatherLoader {
         displayWeather(weatherDTO)
     }
 
-    override fun onFailed(throwable: Throwable) {
-        binding.detailsFragment.showSnackBar("Ошибка загрузки!", 0)
+    override fun onFailed(s: String) {
+        binding.detailsFragment.showSnackBar(s, 0)
     }
 
 }

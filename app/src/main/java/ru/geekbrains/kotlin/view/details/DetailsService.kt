@@ -64,7 +64,7 @@ class DetailsService(val name: String = "") : IntentService(name) {
     }
 
     private fun messagePutExtraError(s: String) {
-        message.putExtra(DETAILS_RESULT, s)
+        message.putExtra(DETAILS_RESULT_ERROR, s)
         LocalBroadcastManager.getInstance(this).sendBroadcast(message)
     }
 }
