@@ -3,11 +3,17 @@ package ru.geekbrains.kotlin.view.details
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
 import ru.geekbrains.kotlin.databinding.FragmentDetailsBinding
 import ru.geekbrains.kotlin.repository.Weather
 import ru.geekbrains.kotlin.view.utlis.*
@@ -72,13 +78,28 @@ class DetailsFragment : Fragment() {
                     cityCoordinates.text = "${weather.city.lat} ${weather.city.lon}"
                     temperatureValue.text = weather.temperature.toString()
                     feelsLikeValue.text = weather.feelsLike.toString()
+                    weatherCondition.text = weather.condition
+                    Glide.with(requireActivity()).load("https://freepngimg.com/thumb/light/78413-neon-effect-creative-lighting-halo-glow.png").into(imgCityIcon)
+                    Picasso.get()?.load("https://freepngimg.com/thumb/house/9-2-city-building-png.png")?.into(imgBottom)
+
+                    iconCondition.loadSvg("https://yastatic.net/weather/i/icons/blueye/color/svg/${weather.icon}.svg")
                 }
             }
-            is DetailsState.Loading -> {
-
-            }
-            is DetailsState.Error -> binding.detailsFragment.showSnackBar("Ошибка!", 0)
+            is DetailsState.Error -> binding.detailsFragment.showSnackBar("Ошибка закгрузки данных!", 0)
         }
+    }
+
+    fun ImageView.loadSvg(url:String){
+        val imageLoader = ImageLoader.Builder(this.context)
+            .componentRegistry{ add(SvgDecoder(this@loadSvg.context))}
+            .build()
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .data(url)
+            .target(this)
+            .build()
+        imageLoader.enqueue(request)
     }
 
     override fun onDestroy() {

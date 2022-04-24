@@ -17,7 +17,6 @@ class DetailsViewModel (
     fun getLiveData() = liveData
 
     fun getWeather(city: City){
-        liveData.postValue(DetailsState.Loading)
         repository.getWeatherDetails(city, object  :Callback{
             override fun onResponse(weather: Weather){
                 liveData.postValue(DetailsState.Success(weather))

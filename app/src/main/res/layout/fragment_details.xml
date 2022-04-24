@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/details_fragment"
@@ -12,18 +13,27 @@
         android:id="@+id/mainView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgCityIcon"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_img_icon_city"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/cityName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/city_name_margin_top"
             android:text="@string/city_default"
             android:textSize="@dimen/text"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf = "@id/imgCityIcon"/>
 
         <TextView
             android:id="@+id/cityCoordinates"
@@ -47,6 +57,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cityCoordinates" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iconCondition"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:scaleType="centerInside"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weatherCondition"
+            tools:ignore="MissingConstraints" />
+
 
         <TextView
             android:id="@+id/temperatureLabel"
@@ -56,7 +76,7 @@
             android:text="@string/temperature_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/weatherCondition" />
+            app:layout_constraintTop_toBottomOf="@+id/iconCondition" />
 
         <TextView
             android:id="@+id/temperatureValue"
@@ -87,6 +107,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feelsLikeLabel" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgBottom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_img_icon_city"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf ="parent"
+            tools:ignore="MissingConstraints" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

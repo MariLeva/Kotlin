@@ -11,4 +11,5 @@
     <dimen name="recycler_item_padding">10dp</dimen>
     <dimen name="recycler_item_line_height">1dp</dimen>
     <dimen name="margin_end">20dp</dimen>
+    <dimen name="height_img_icon_city">70dp</dimen>
 </resources>
