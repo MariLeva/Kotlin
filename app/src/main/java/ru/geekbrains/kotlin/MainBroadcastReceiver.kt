@@ -1,4 +1,4 @@
-package ru.geekbrains.kotlin.repository
+package ru.geekbrains.kotlin
 
 import android.content.BroadcastReceiver
 import android.content.Context

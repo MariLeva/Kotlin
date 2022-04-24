@@ -3,11 +3,8 @@ package ru.geekbrains.kotlin.view.details
 import android.app.IntentService
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import ru.geekbrains.kotlin.BuildConfig
 import ru.geekbrains.kotlin.repository.WeatherDTO
@@ -32,7 +29,7 @@ class DetailsService(val name: String = "") : IntentService(name) {
     @RequiresApi(Build.VERSION_CODES.N)
     private fun loadWeather(lon: String, lat: String) {
         try {
-            val uri = URL("${YA_DOMAIN}${YA_PATH}lat=${lat}&lon=${lon}")
+            val uri = URL("${YA_DOMAIN}${YA_ENDPOINT}lat=${lat}&lon=${lon}")
             lateinit var urlConnection: HttpsURLConnection
             try {
                 urlConnection = (uri.openConnection() as HttpsURLConnection).apply {
