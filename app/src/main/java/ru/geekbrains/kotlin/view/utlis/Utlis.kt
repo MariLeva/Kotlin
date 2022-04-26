@@ -11,6 +11,7 @@ const val YA_API_KEY = "X-Yandex-API-Key"
 const val DETAILS_RESULT = "LOAD RESULT"
 const val DETAILS_RESULT_ERROR = "LOAD RESULT ERROR"
 const val KEY_WAVE_SERVICE_BROADCAST = "myaction_way"
+const val IS_WORLD_KEY = "LIST_OF_TOWNS"
 
 class Utlis {
 }

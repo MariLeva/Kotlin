@@ -1,5 +1,6 @@
 package ru.geekbrains.kotlin.view.weatherList
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
@@ -12,6 +13,7 @@ import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentMainBinding
 import ru.geekbrains.kotlin.repository.Weather
 import ru.geekbrains.kotlin.view.details.DetailsFragment
+import ru.geekbrains.kotlin.view.utlis.IS_WORLD_KEY
 import ru.geekbrains.kotlin.view.utlis.KEY_BUNDLE_WEATHER
 import ru.geekbrains.kotlin.viewmodel.AppState
 import ru.geekbrains.kotlin.viewmodel.MainViewModel
@@ -22,7 +24,7 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
     private val adapter = WeatherListAdapter(this)
 
     private lateinit var viewModel: MainViewModel
-    private var isRus: Boolean = true
+    private var isRus: Boolean = false
 
     override fun onItemClick(weather: Weather) {
         requireActivity().supportFragmentManager.beginTransaction()
@@ -47,7 +49,6 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             mainFragmentFAB.setOnClickListener {
-                isRus = !isRus
                 changeWeatherDataSet()
             }
         }
@@ -55,8 +56,14 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
             it.getData().observe(viewLifecycleOwner, Observer { data: AppState -> renderData(data) })
             it.getWeatherFromLocalRus()
         }
-    }
 
+        activity?.let {
+            if (it.getPreferences(Context.MODE_PRIVATE).getBoolean(IS_WORLD_KEY, false)) {
+                changeWeatherDataSet()
+            } else
+                viewModel.getWeatherFromLocalRus()
+        }
+    }
 
     override fun onDestroy() {
         _binding = null
@@ -121,6 +128,14 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
             } else {
                 getWeatherFromLocalWorld()
                 binding.mainFragmentFAB.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_world))
+            }
+        }
+        isRus = !isRus
+
+        activity?.let {
+            with(it.getPreferences(Context.MODE_PRIVATE).edit()){
+                putBoolean(IS_WORLD_KEY,isRus)
+                apply()
             }
         }
     }
