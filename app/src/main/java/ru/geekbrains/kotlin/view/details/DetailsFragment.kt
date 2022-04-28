@@ -10,10 +10,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import coil.ImageLoader
 import coil.decode.SvgDecoder
+import coil.load
 import coil.request.ImageRequest
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
+import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentDetailsBinding
 import ru.geekbrains.kotlin.repository.City
 import ru.geekbrains.kotlin.repository.Weather
@@ -81,12 +83,14 @@ class DetailsFragment : Fragment() {
                     temperatureValue.text = weather.temperature.toString()
                     feelsLikeValue.text = weather.feelsLike.toString()
                     weatherCondition.text = weather.condition
-                    Glide.with(requireActivity())
-                        .load("https://freepngimg.com/thumb/light/78413-neon-effect-creative-lighting-halo-glow.png")
-                        .into(imgCityIcon)
-                    Picasso.get()
-                        ?.load("https://freepngimg.com/thumb/house/9-2-city-building-png.png")
-                        ?.into(imgBottom)
+                    imgCityIcon.load("https://freepngimg.com/thumb/light/78413-neon-effect-creative-lighting-halo-glow.png"){
+                        placeholder(R.drawable.ic_baseline_image_search_24)
+                        error(R.drawable.ic_baseline_image_not_supported_24)
+                    }
+                    imgBottom.load("https://freepngimg.com/thumb/house/9-2-city-building-png.png"){
+                        placeholder(R.drawable.ic_baseline_image_search_24)
+                        error(R.drawable.ic_baseline_image_not_supported_24)
+                    }
 
                     iconCondition.loadSvg("https://yastatic.net/weather/i/icons/blueye/color/svg/${weather.icon}.svg")
                 }
