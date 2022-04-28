@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentMainBinding
+import ru.geekbrains.kotlin.history.HistoryFragment
 import ru.geekbrains.kotlin.repository.Weather
 import ru.geekbrains.kotlin.view.details.DetailsFragment
 import ru.geekbrains.kotlin.view.utlis.IS_WORLD_KEY
@@ -116,6 +117,10 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
             R.id.server ->
                 binding.mainFragment.showSnackBarAction(getString(R.string.remote_server),0, getString(R.string.open),
                         { viewModel.getWeatherFromServer()})
+            R.id.history ->
+                requireActivity().supportFragmentManager.apply {
+                    beginTransaction().add(R.id.container, HistoryFragment.newInstance()).addToBackStack("").commit()
+                }
         }
         return super.onOptionsItemSelected(item)
     }

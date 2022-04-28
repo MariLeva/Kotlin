@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import ru.geekbrains.kotlin.databinding.FragmentDetailsBinding
+import ru.geekbrains.kotlin.repository.City
 import ru.geekbrains.kotlin.repository.Weather
 import ru.geekbrains.kotlin.view.utlis.*
 import ru.geekbrains.kotlin.viewmodel.DetailsState
@@ -72,6 +73,7 @@ class DetailsFragment : Fragment() {
         when (detailsState) {
             is DetailsState.Success -> {
                 val weather = detailsState.weather
+                saveCity(weather.city, weather)
                 with(binding) {
                     mainView.visibility = View.VISIBLE
                     cityName.text = weather.city.name
@@ -79,19 +81,26 @@ class DetailsFragment : Fragment() {
                     temperatureValue.text = weather.temperature.toString()
                     feelsLikeValue.text = weather.feelsLike.toString()
                     weatherCondition.text = weather.condition
-                    Glide.with(requireActivity()).load("https://freepngimg.com/thumb/light/78413-neon-effect-creative-lighting-halo-glow.png").into(imgCityIcon)
-                    Picasso.get()?.load("https://freepngimg.com/thumb/house/9-2-city-building-png.png")?.into(imgBottom)
+                    Glide.with(requireActivity())
+                        .load("https://freepngimg.com/thumb/light/78413-neon-effect-creative-lighting-halo-glow.png")
+                        .into(imgCityIcon)
+                    Picasso.get()
+                        ?.load("https://freepngimg.com/thumb/house/9-2-city-building-png.png")
+                        ?.into(imgBottom)
 
                     iconCondition.loadSvg("https://yastatic.net/weather/i/icons/blueye/color/svg/${weather.icon}.svg")
                 }
             }
-            is DetailsState.Error -> binding.detailsFragment.showSnackBar("Ошибка закгрузки данных!", 0)
+            is DetailsState.Error -> binding.detailsFragment.showSnackBar(
+                "Ошибка закгрузки данных!",
+                0
+            )
         }
     }
 
-    fun ImageView.loadSvg(url:String){
+    fun ImageView.loadSvg(url: String) {
         val imageLoader = ImageLoader.Builder(this.context)
-            .componentRegistry{ add(SvgDecoder(this@loadSvg.context))}
+            .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
             .build()
         val request = ImageRequest.Builder(this.context)
             .crossfade(true)
@@ -105,6 +114,15 @@ class DetailsFragment : Fragment() {
     override fun onDestroy() {
         _binding = null
         super.onDestroy()
+    }
+
+    private fun saveCity(
+        city: City,
+        weather: Weather
+    ) {
+        viewModel.saveCityToDB(
+            Weather(city, weather.temperature, weather.feelsLike, weather.condition, weather.icon)
+        )
     }
 
 }

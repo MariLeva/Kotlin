@@ -1,6 +1,7 @@
 package ru.geekbrains.kotlin.view.utlis
 
 import ru.geekbrains.kotlin.repository.*
+import ru.geekbrains.kotlin.room.HistoryEntity
 
 const val KEY_BUNDLE_WEATHER = "weather"
 const val KEY_BUNDLE_LON = "lon"
@@ -19,4 +20,14 @@ class Utlis {
 fun convertDtoToModel(weatherDTO: WeatherDTO): Weather{
     val fact: FactDTO = weatherDTO.fact
     return (Weather(getDefaultCity(), fact.temp, fact.feels_like, fact.condition, fact.icon))
+}
+
+fun convertHistoryEntityToWeather(entityList: List<HistoryEntity>): List<Weather> {
+    return entityList.map {
+        Weather(City(it.city, 0.0, 0.0), it.temperature, it.feelsLike, it.condition, it.icon)
+    }
+}
+
+fun convertWeatherToEntity(weather: Weather): HistoryEntity {
+    return HistoryEntity(0, weather.city.name, weather.temperature, weather.feelsLike, weather.condition, weather.icon)
 }

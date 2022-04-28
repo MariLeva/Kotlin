@@ -12,6 +12,7 @@
     <string name="local_server">Local Server</string>
     <string name="remote_server">Remote Server</string>
     <string name="open">Открыть</string>
+    <string name="menu_title_history">history</string>
 
 
 </resources>

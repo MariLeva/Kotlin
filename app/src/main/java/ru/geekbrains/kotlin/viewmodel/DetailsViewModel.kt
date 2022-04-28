@@ -2,16 +2,15 @@ package ru.geekbrains.kotlin.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ru.geekbrains.kotlin.repository.City
-import ru.geekbrains.kotlin.repository.DetailsRepository
-import ru.geekbrains.kotlin.repository.DetailsRepositoryImpl
-import ru.geekbrains.kotlin.repository.Weather
+import ru.geekbrains.kotlin.App.Companion.getHistoryDao
+import ru.geekbrains.kotlin.repository.*
 import java.io.IOException
 import java.lang.Exception
 
 class DetailsViewModel (
     private val liveData: MutableLiveData<DetailsState> = MutableLiveData(),
-    private val repository: DetailsRepository = DetailsRepositoryImpl()
+    private val repository: DetailsRepository = DetailsRepositoryImpl(),
+    private val historyRepository: LocalRepository = LocalRepositoryImpl(getHistoryDao())
 ): ViewModel(){
 
     fun getLiveData() = liveData
@@ -26,6 +25,10 @@ class DetailsViewModel (
                 liveData.postValue(DetailsState.Error(Throwable(e.message)))
             }
         })
+    }
+
+    fun saveCityToDB(weather: Weather){
+        historyRepository.saveEntity(weather)
     }
 
     interface Callback{
