@@ -39,12 +39,16 @@ class HistoryFragment : Fragment() {
             it.adapter = adapter
             it.layoutManager = LinearLayoutManager(requireContext())
         }
-        viewModel.getData().observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModel.getAllHistory()
+        Thread {
+            activity?.runOnUiThread {
+                viewModel.getData().observe(viewLifecycleOwner, Observer { renderData(it) })
+                viewModel.getAllHistory()
+            }
+        }.start()
     }
 
-    private fun renderData(data: AppState){
-        when (data){
+    private fun renderData(data: AppState) {
+        when (data) {
             is AppState.Error -> {
                 binding.historyRecyclerView.visibility = View.VISIBLE
                 binding.loadingLayout.loadingLayout.visibility = View.GONE

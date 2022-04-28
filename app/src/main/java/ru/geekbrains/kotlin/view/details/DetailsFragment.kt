@@ -116,13 +116,13 @@ class DetailsFragment : Fragment() {
         super.onDestroy()
     }
 
-    private fun saveCity(
-        city: City,
-        weather: Weather
-    ) {
-        viewModel.saveCityToDB(
-            Weather(city, weather.temperature, weather.feelsLike, weather.condition, weather.icon)
-        )
+    private fun saveCity(city: City, weather: Weather) {
+        Thread {
+            activity?.runOnUiThread {
+                viewModel.saveCityToDB(
+                    Weather(city, weather.temperature, weather.feelsLike, weather.condition, weather.icon))
+            }
+        }.start()
     }
 
 }
