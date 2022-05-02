@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import ru.geekbrains.kotlin.databinding.FragmentContentProviderBinding
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ContentResolver
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.provider.ContactsContract
 import android.widget.TextView
 import ru.geekbrains.kotlin.R
@@ -86,6 +88,7 @@ class ContentProviderFragment : Fragment() {
     }
 
 
+    @SuppressLint("Range")
     private fun getContacts() {
         val contentResolver: ContentResolver = requireContext().contentResolver
         val cursor = contentResolver.query(
@@ -98,12 +101,35 @@ class ContentProviderFragment : Fragment() {
         cursor?.let {
             for (i in 0 until it.count) {
                 if (cursor.moveToPosition(i)) {
-                    val columnName = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
-                    val name:String = cursor.getString(columnName)
+                    val id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
+                    val name =
+                        cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                    val hasNumber =
+                        cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))
                     binding.containerForContact.addView(TextView(requireContext()).apply {
                         text = name
                         textSize = resources.getDimension(R.dimen.text_contact)
                     })
+                    if (hasNumber > 0) {
+                        val cursorPhone = contentResolver.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                            arrayOf(id),
+                            null
+                        )
+                        cursorPhone?.let {
+                            if (cursorPhone.moveToNext()) {
+                                val number = cursorPhone.getString(
+                                    cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                                )
+                                binding.containerForContact.addView(TextView(requireContext()).apply {
+                                    text = number
+                                    textSize = resources.getDimension(R.dimen.text_contact_number)
+                                })
+                            }
+                        }
+                    }
                 }
             }
         }
