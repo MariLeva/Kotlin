@@ -21,6 +21,6 @@
     <item
         android:id="@+id/content_provider"
         android:title="@string/menu_title_history"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_baseline_contact_phone_24"
         app:showAsAction="always"/>
 </menu>

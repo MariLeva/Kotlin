@@ -11,10 +11,15 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ContentResolver
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.net.Uri
 import android.provider.ContactsContract
 import android.widget.TextView
+import android.widget.Toast
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
+import com.google.android.material.snackbar.Snackbar
 import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.view.utlis.REQUEST_CODE
 
@@ -126,6 +131,10 @@ class ContentProviderFragment : Fragment() {
                                 binding.containerForContact.addView(TextView(requireContext()).apply {
                                     text = number
                                     textSize = resources.getDimension(R.dimen.text_contact_number)
+                                    setOnClickListener(){
+                                        Snackbar.make(this, "Открыть вызов номера?", LENGTH_INDEFINITE)
+                                            .setAction("Открыть") { callNumber(number) }.show()
+                                    }
                                 })
                             }
                         }
@@ -134,6 +143,11 @@ class ContentProviderFragment : Fragment() {
             }
         }
         cursor?.close()
+    }
+
+    private fun callNumber(number: String){
+        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
+        startActivity(intent)
     }
 
     companion object {
