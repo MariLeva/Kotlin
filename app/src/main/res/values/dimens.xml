@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text">30sp</dimen>
+    <dimen name="text_contact">14sp</dimen>
     <dimen name="city_name_margin_top">50sp</dimen>
     <dimen name="margin_15_dp">15sp</dimen>
     <dimen name="temperature_value_text_size">40sp</dimen>

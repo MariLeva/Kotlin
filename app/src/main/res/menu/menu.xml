@@ -17,4 +17,10 @@
         android:title="@string/menu_title_history"
         android:icon="@drawable/ic_baseline_history_edu_24"
         app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/content_provider"
+        android:title="@string/menu_title_history"
+        android:icon="@drawable/ic_launcher_foreground"
+        app:showAsAction="always"/>
 </menu>

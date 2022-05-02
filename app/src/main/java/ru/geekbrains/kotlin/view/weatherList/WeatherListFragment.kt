@@ -1,5 +1,6 @@
 package ru.geekbrains.kotlin.view.weatherList
 
+import android.content.ContentProvider
 import android.content.Context
 import android.os.Bundle
 import android.view.*
@@ -13,6 +14,7 @@ import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentMainBinding
 import ru.geekbrains.kotlin.history.HistoryFragment
 import ru.geekbrains.kotlin.repository.Weather
+import ru.geekbrains.kotlin.view.contentProvider.ContentProviderFragment
 import ru.geekbrains.kotlin.view.details.DetailsFragment
 import ru.geekbrains.kotlin.view.utlis.IS_WORLD_KEY
 import ru.geekbrains.kotlin.view.utlis.KEY_BUNDLE_WEATHER
@@ -120,6 +122,10 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
             R.id.history ->
                 requireActivity().supportFragmentManager.apply {
                     beginTransaction().add(R.id.container, HistoryFragment.newInstance()).addToBackStack("").commit()
+                }
+            R.id.content_provider ->
+                requireActivity().supportFragmentManager.apply {
+                    beginTransaction().add(R.id.container, ContentProviderFragment.newInstance()).addToBackStack("").commit()
                 }
         }
         return super.onOptionsItemSelected(item)
