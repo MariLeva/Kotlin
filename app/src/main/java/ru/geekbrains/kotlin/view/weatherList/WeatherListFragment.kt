@@ -32,6 +32,7 @@ import ru.geekbrains.kotlin.view.utlis.REQUEST_CODE
 import ru.geekbrains.kotlin.view.utlis.REQUEST_CODE_LOCATION
 import ru.geekbrains.kotlin.viewmodel.AppState
 import ru.geekbrains.kotlin.viewmodel.MainViewModel
+import java.util.*
 
 class WeatherListFragment : Fragment(), OnItemClickListener {
     private var _binding: FragmentMainBinding? = null
@@ -238,7 +239,7 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
     }
 
     private fun getAddressByLocation(location: Location) {
-        val geocoder = Geocoder(requireContext())
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
         Thread {
             val addressText = geocoder.getFromLocation(
                 location.latitude,
@@ -260,7 +261,7 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
                     onItemClick(
                         Weather(
                             City(
-                                address, location.latitude, location.latitude
+                                address, location.latitude, location.longitude
                             )
                         )
                     )

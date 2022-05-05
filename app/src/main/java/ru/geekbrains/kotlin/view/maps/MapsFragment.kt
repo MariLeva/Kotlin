@@ -14,21 +14,34 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import ru.geekbrains.kotlin.R
+import ru.geekbrains.kotlin.databinding.FragmentMapsBinding
+import ru.geekbrains.kotlin.databinding.FragmentMapsMainBinding
 
 class MapsFragment : Fragment() {
 
     private val callback = OnMapReadyCallback { googleMap ->
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val tomsk = LatLng(56.4977100, 84.9743700)
+        googleMap.addMarker(MarkerOptions().position(tomsk).title("Marker in Tomsk"))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(tomsk))
+    }
+
+    private var _binding: FragmentMapsMainBinding? = null
+    private val binding: FragmentMapsMainBinding get() {
+        return _binding!!
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+    ): View {
+        _binding = FragmentMapsMainBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

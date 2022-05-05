@@ -27,5 +27,7 @@
     <string name="dialog_address_title">Ваш адрес</string>
     <string name="dialog_address_get_weather">Узнать погоду</string>
     <string name="menu_maps">google maps</string>
+    <string name="button_search_map">Search</string>
+    <string name="address_edittext">введите адрес</string>
 
 </resources>
