@@ -14,6 +14,7 @@ const val DETAILS_RESULT_ERROR = "LOAD RESULT ERROR"
 const val KEY_WAVE_SERVICE_BROADCAST = "myaction_way"
 const val IS_WORLD_KEY = "LIST_OF_TOWNS"
 const val REQUEST_CODE = 999
+const val REQUEST_CODE_LOCATION = 998
 
 class Utlis {
 }

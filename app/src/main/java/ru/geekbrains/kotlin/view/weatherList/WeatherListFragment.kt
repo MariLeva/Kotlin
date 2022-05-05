@@ -1,7 +1,15 @@
 package ru.geekbrains.kotlin.view.weatherList
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.ContentProvider
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
@@ -13,11 +21,14 @@ import com.google.android.material.snackbar.Snackbar
 import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentMainBinding
 import ru.geekbrains.kotlin.history.HistoryFragment
+import ru.geekbrains.kotlin.repository.City
 import ru.geekbrains.kotlin.repository.Weather
 import ru.geekbrains.kotlin.view.contentProvider.ContentProviderFragment
 import ru.geekbrains.kotlin.view.details.DetailsFragment
 import ru.geekbrains.kotlin.view.utlis.IS_WORLD_KEY
 import ru.geekbrains.kotlin.view.utlis.KEY_BUNDLE_WEATHER
+import ru.geekbrains.kotlin.view.utlis.REQUEST_CODE
+import ru.geekbrains.kotlin.view.utlis.REQUEST_CODE_LOCATION
 import ru.geekbrains.kotlin.viewmodel.AppState
 import ru.geekbrains.kotlin.viewmodel.MainViewModel
 
@@ -31,16 +42,20 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
 
     override fun onItemClick(weather: Weather) {
         requireActivity().supportFragmentManager.beginTransaction()
-                .add(R.id.container, DetailsFragment.newInstance(Bundle().apply {
-                    putParcelable(KEY_BUNDLE_WEATHER, weather)
-                })).addToBackStack("").commit()
+            .add(R.id.container, DetailsFragment.newInstance(Bundle().apply {
+                putParcelable(KEY_BUNDLE_WEATHER, weather)
+            })).addToBackStack("").commit()
     }
 
     companion object {
         fun newInstance() = WeatherListFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,10 +69,14 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
             mainFragmentFAB.setOnClickListener {
                 changeWeatherDataSet()
             }
+            mainFragmentFABLocation.setOnClickListener {
+                checkPermission()
+            }
         }
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java).also {
-            it.getData().observe(viewLifecycleOwner, Observer { data: AppState -> renderData(data) })
-            it.getWeatherFromLocalRus()
+            it.getData()
+                .observe(viewLifecycleOwner, Observer { data: AppState -> renderData(data) })
+            //  it.getWeatherFromLocalRus()
         }
 
         activity?.let {
@@ -92,16 +111,18 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
     }
 
     private fun View.showSnackBar(
-            text: String,
-            length: Int = Snackbar.LENGTH_INDEFINITE) {
+        text: String,
+        length: Int = Snackbar.LENGTH_INDEFINITE
+    ) {
         Snackbar.make(this, text, length).show()
     }
 
     private fun View.showSnackBarAction(
-            text: String,
-            length: Int = Snackbar.LENGTH_INDEFINITE,
-            actionText: String,
-            action: (View) -> Unit) {
+        text: String,
+        length: Int = Snackbar.LENGTH_INDEFINITE,
+        actionText: String,
+        action: (View) -> Unit
+    ) {
         Snackbar.make(this, text, length).setAction(actionText, action).show()
     }
 
@@ -114,18 +135,24 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.local_server ->
-                binding.mainFragment.showSnackBarAction(getString(R.string.local_server),0, getString(R.string.open),
-                        {changeWeatherDataSet()})
+                binding.mainFragment.showSnackBarAction(getString(R.string.local_server),
+                    0,
+                    getString(R.string.open),
+                    { changeWeatherDataSet() })
             R.id.server ->
-                binding.mainFragment.showSnackBarAction(getString(R.string.remote_server),0, getString(R.string.open),
-                        { viewModel.getWeatherFromServer()})
+                binding.mainFragment.showSnackBarAction(getString(R.string.remote_server),
+                    0,
+                    getString(R.string.open),
+                    { viewModel.getWeatherFromServer() })
             R.id.history ->
                 requireActivity().supportFragmentManager.apply {
-                    beginTransaction().add(R.id.container, HistoryFragment.newInstance()).addToBackStack("").commit()
+                    beginTransaction().add(R.id.container, HistoryFragment.newInstance())
+                        .addToBackStack("").commit()
                 }
             R.id.content_provider ->
                 requireActivity().supportFragmentManager.apply {
-                    beginTransaction().add(R.id.container, ContentProviderFragment.newInstance()).addToBackStack("").commit()
+                    beginTransaction().add(R.id.container, ContentProviderFragment.newInstance())
+                        .addToBackStack("").commit()
                 }
         }
         return super.onOptionsItemSelected(item)
@@ -135,20 +162,131 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
         with(viewModel) {
             if (isRus) {
                 getWeatherFromLocalRus()
-                binding.mainFragmentFAB.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_rus))
+                binding.mainFragmentFAB.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_rus
+                    )
+                )
             } else {
                 getWeatherFromLocalWorld()
-                binding.mainFragmentFAB.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_world))
+                binding.mainFragmentFAB.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_world
+                    )
+                )
             }
         }
         isRus = !isRus
 
         activity?.let {
-            with(it.getPreferences(Context.MODE_PRIVATE).edit()){
-                putBoolean(IS_WORLD_KEY,isRus)
+            with(it.getPreferences(Context.MODE_PRIVATE).edit()) {
+                putBoolean(IS_WORLD_KEY, isRus)
                 apply()
             }
         }
+    }
+
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            getLocation()
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
+            explain()
+        } else
+            mRequestPermission()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLocation() {
+        context?.let {
+            val locationManager = it.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                val providerGPS = locationManager.getProvider(LocationManager.GPS_PROVIDER)
+                providerGPS?.let {
+                    locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        0,
+                        100f,
+                        locationListener
+                    )
+                }
+            }
+        }
+    }
+
+    private val locationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            getAddressByLocation(location)
+        }
+    }
+
+    private fun getAddressByLocation(location: Location) {
+        val geocoder = Geocoder(requireContext())
+        Thread {
+            val addressText = geocoder.getFromLocation(
+                location.latitude,
+                location.longitude,
+                10000000
+            )[0].getAddressLine(0)
+            requireActivity().runOnUiThread {
+                showAddressDialog(addressText, location)
+            }
+        }.start()
+    }
+
+    private fun showAddressDialog(address: String, location: Location) {
+        activity?.let {
+            AlertDialog.Builder(it)
+                .setTitle(getString(R.string.dialog_address_title))
+                .setMessage(address)
+                .setPositiveButton(getString(R.string.dialog_address_get_weather)) { _, _ ->
+                    onItemClick(
+                        Weather(
+                            City(
+                                address, location.latitude, location.latitude
+                            )
+                        )
+                    )
+                }
+                .setNegativeButton(getString(R.string.dialog_button_close)) { dialog, _ -> dialog.dismiss() }
+                .create()
+                .show()
+        }
+    }
+
+    private fun explain() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(resources.getString(R.string.dialog_rationale_title))
+            .setMessage(resources.getString(R.string.dialog_rationale_message))
+            .setPositiveButton(resources.getString(R.string.dialog_rationale_give_access)) { _, _ ->
+                mRequestPermission()
+            }
+            .setNegativeButton(getString(R.string.dialog_rationale_decline)) { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
+    }
+
+    private fun mRequestPermission() {
+        requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_LOCATION)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_CODE_LOCATION) {
+            for (i in permissions.indices) {
+                if (permissions[i] == Manifest.permission.ACCESS_FINE_LOCATION && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    getLocation()
+                } else explain()
+            }
+        } else super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 }
