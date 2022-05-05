@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Geocoder
 import android.location.Location
 import androidx.fragment.app.Fragment
 
@@ -19,6 +20,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.fragment_maps.*
+import kotlinx.android.synthetic.main.fragment_maps_main.*
+import okio.IOException
 import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentMapsBinding
 import ru.geekbrains.kotlin.databinding.FragmentMapsMainBinding
@@ -66,6 +69,28 @@ class MapsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+        initSearchAddress()
+    }
+
+    private fun initSearchAddress() {
+        binding.btnSearch.setOnClickListener{
+            val geocoder = Geocoder(it.context)
+            val searchText = searchAddress.text.toString()
+            Thread{
+                try {
+                    val addresses = geocoder.getFromLocationName(searchText, 1)
+                    if (addresses.size > 0) {
+                        val location = LatLng(addresses[0].latitude, addresses[0].longitude)
+                        it.post {
+                            setMarker(location, searchText, R.drawable.ic_map_marker)
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+                        }
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }.start()
+        }
     }
 
     private fun addMarkerToArray(location: LatLng) {
