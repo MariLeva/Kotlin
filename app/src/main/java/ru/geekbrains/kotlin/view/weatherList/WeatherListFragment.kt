@@ -25,6 +25,7 @@ import ru.geekbrains.kotlin.repository.City
 import ru.geekbrains.kotlin.repository.Weather
 import ru.geekbrains.kotlin.view.contentProvider.ContentProviderFragment
 import ru.geekbrains.kotlin.view.details.DetailsFragment
+import ru.geekbrains.kotlin.view.maps.MapsFragment
 import ru.geekbrains.kotlin.view.utlis.IS_WORLD_KEY
 import ru.geekbrains.kotlin.view.utlis.KEY_BUNDLE_WEATHER
 import ru.geekbrains.kotlin.view.utlis.REQUEST_CODE
@@ -155,6 +156,13 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
                 requireActivity().supportFragmentManager.apply {
                     if (findFragmentByTag("ContentProviderFragment") == null) {
                         beginTransaction().add(R.id.container, ContentProviderFragment.newInstance(), "ContentProviderFragment"
+                        ).addToBackStack("").commit()
+                    }
+                }
+            R.id.maps ->
+                requireActivity().supportFragmentManager.apply {
+                    if (findFragmentByTag("MapsFragment") == null) {
+                        beginTransaction().add(R.id.container, MapsFragment(), "MapsFragment"
                         ).addToBackStack("").commit()
                     }
                 }
