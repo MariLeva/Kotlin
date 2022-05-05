@@ -146,13 +146,17 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
                     { viewModel.getWeatherFromServer() })
             R.id.history ->
                 requireActivity().supportFragmentManager.apply {
-                    beginTransaction().add(R.id.container, HistoryFragment.newInstance())
-                        .addToBackStack("").commit()
+                    if (findFragmentByTag("HistoryFragment") == null) {
+                        beginTransaction().add(R.id.container, HistoryFragment.newInstance(), "HistoryFragment"
+                        ).addToBackStack("").commit()
+                    }
                 }
             R.id.content_provider ->
                 requireActivity().supportFragmentManager.apply {
-                    beginTransaction().add(R.id.container, ContentProviderFragment.newInstance())
-                        .addToBackStack("").commit()
+                    if (findFragmentByTag("ContentProviderFragment") == null) {
+                        beginTransaction().add(R.id.container, ContentProviderFragment.newInstance(), "ContentProviderFragment"
+                        ).addToBackStack("").commit()
+                    }
                 }
         }
         return super.onOptionsItemSelected(item)
