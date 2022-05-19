@@ -1,13 +1,14 @@
 plugins {
     id 'com.android.application'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'com.google.gms.google-services'
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     buildFeatures{
         viewBinding true
@@ -23,7 +24,7 @@ android {
     defaultConfig {
         applicationId "ru.geekbrains.kotlin"
         minSdk 24
-        targetSdk 31
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -54,6 +55,7 @@ dependencies {
 
     implementation 'androidx.room:room-runtime:2.3.0'
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.0.4'
     kapt 'androidx.room:room-compiler:2.3.0'
 
     implementation 'com.github.bumptech.glide:glide:4.11.0'
