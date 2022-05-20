@@ -5,6 +5,10 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.se.omapi.SEService
+import android.util.Log
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.ActivityMainBinding
 import ru.geekbrains.kotlin.MainBroadcastReceiver
@@ -26,5 +30,17 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, WeatherListFragment.newInstance()).commit()
         }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful){
+                Log.w("mylogs_push", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            val token = task.result
+            Log.d("mylogs_push", "$token")
+        })
     }
+
+
 }
+
