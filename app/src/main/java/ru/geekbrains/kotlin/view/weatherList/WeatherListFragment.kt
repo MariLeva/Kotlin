@@ -68,7 +68,7 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         binding.apply {
-            version.text = BuildConfig.BUILD_TYPE
+            version.text = getString(R.string.hello)
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             mainFragmentFAB.setOnClickListener {
