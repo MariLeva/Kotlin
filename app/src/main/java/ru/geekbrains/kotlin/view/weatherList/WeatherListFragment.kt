@@ -10,6 +10,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
@@ -18,6 +19,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import ru.geekbrains.kotlin.BuildConfig
 import ru.geekbrains.kotlin.R
 import ru.geekbrains.kotlin.databinding.FragmentMainBinding
 import ru.geekbrains.kotlin.history.HistoryFragment
@@ -66,6 +68,7 @@ class WeatherListFragment : Fragment(), OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         binding.apply {
+            version.text = BuildConfig.BUILD_TYPE
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             mainFragmentFAB.setOnClickListener {
